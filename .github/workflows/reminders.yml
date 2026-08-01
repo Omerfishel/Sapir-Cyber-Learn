@@ -1,0 +1,32 @@
+name: Sapir roadmap reminders
+
+# Fires even when nobody has the site open. Times are UTC.
+# Israel is UTC+3 (summer) / UTC+2 (winter) — adjust the crons by 1h across DST if you care about the exact minute.
+on:
+  schedule:
+    - cron: '30 5 * * *'    # ~08:30 Israel (summer): reading nudge
+    - cron: '0 16 * * *'    # ~19:00 Israel (summer): study nudge
+  workflow_dispatch:        # lets you run it by hand from the Actions tab
+    inputs:
+      type:
+        description: 'which nudge to send (study or reading)'
+        default: 'reading'
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Send reminder email
+        env:
+          EMAILJS_SERVICE_ID:  ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_PUBLIC_KEY:  ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
+          TO_EMAIL:            ${{ secrets.TO_EMAIL }}
+          SCHEDULE:            ${{ github.event.schedule }}
+          DISPATCH_TYPE:       ${{ github.event.inputs.type }}
+        run: node scripts/reminder.mjs
