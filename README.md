@@ -9,7 +9,9 @@ Files:
 - `index.html` — the app (this is the only file that changes between versions).
 - `config.js` — your Supabase keys (you edit this once; it survives app updates).
 - `supabase-setup.sql` — run once to create the contest tables.
-- `.github/workflows/reminders.yml` + `scripts/reminder.mjs` — the daily email cron.
+- `.github/workflows/reminders.yml` + `scripts/reminder.mjs` — the daily email cron (playful, rotating, features today's top article).
+- `.github/workflows/feed.yml` + `scripts/build-feed.mjs` — builds `feed.json` (the live 📰 Feed) a few times a day.
+- `emailjs-template.html` — the dark HTML email design to paste into EmailJS (one time).
 
 ---
 ## 1. Host it (GitHub Pages)
@@ -20,22 +22,43 @@ Files:
 
 ## 2. Email reminders (EmailJS + GitHub Actions)
 Create an EmailJS account, add a Gmail **Service**, and a **Template** with:
-- **To Email:** `{{to_email}}` · **Subject:** `{{subject}}` · **Body:**
-  ```
-  Hi {{to_name}},
-
-  {{message}}
-
-  — Your 2026 Cyber Research Roadmap
-  {{time}}
-  ```
+- **To Email:** `{{to_email}}` · **Subject:** `{{subject}}`
+- **Body:** open the template's **Code (`</>`) view** and paste the entire
+  contents of **`emailjs-template.html`**. That gives the dark, mobile-safe
+  design with a big CTA button and a live "today's read" card. It uses these
+  variables (all sent by `reminder.mjs`): `to_name`, `kicker`, `headline`,
+  `subline`, `cta_text`, `cta_url`, `streak_line`, `read_label`, `read_title`,
+  `read_source`, `read_url`, `sign`.
+  *(Prefer plain text? The script also sends `{{message}}`, so a body of just
+  `{{message}}` still works.)*
 In EmailJS **Account → Security**, enable "Allow EmailJS API for non-browser
 applications" and copy your **Private Key**. Then add these repo **Actions
 secrets** (Settings → Secrets and variables → Actions):
 `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`,
-`EMAILJS_PRIVATE_KEY`, `TO_EMAIL`. The workflow then emails a reading nudge
+`EMAILJS_PRIVATE_KEY`, `TO_EMAIL` (optionally `APP_URL` — defaults to your
+Pages URL, used for the CTA button + deep-links). Each send **randomly rotates**
+through many owl-style variants and, once the feed is live, features the day's
+hottest article. The workflow then emails a reading nudge
 (~08:30 Israel) and a study nudge (~19:00 Israel). Times are UTC in the cron and
 shift ~1h across DST. Run it by hand from the **Actions** tab to test.
+
+## 3. Live security feed (📰 Feed + Reading Radar)
+The app shows a live **📰 Feed** of the latest security research, threat-intel
+and papers, and the right-rail **Reading Radar** surfaces the freshest few. A
+static page can't fetch third-party RSS directly (CORS), so a scheduled Action
+does it server-side and writes `feed.json` next to the app:
+
+1. `feed.yml` runs `scripts/build-feed.mjs` every ~6h (and on demand). It pulls
+   ~28 curated sources, normalises them, dedupes, sorts newest-first, and writes
+   `feed.json`. Individual feeds that fail are skipped.
+2. It commits `feed.json` back to the repo (needs **Settings → Actions →
+   General → Workflow permissions → Read and write**). Pushing it re-publishes
+   Pages, so the app picks it up automatically (it also re-fetches every 15 min).
+3. Until the first run, the Feed tab shows a friendly placeholder and the Radar
+   falls back to the curated source list — nothing breaks.
+
+Edit the `FEEDS` array in `scripts/build-feed.mjs` to add/remove sources; set the
+`category` to one of the app's categories so it gets the right colour.
 
 ---
 ## 3. The contest (accounts + leaderboard) — optional

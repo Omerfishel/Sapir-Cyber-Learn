@@ -27,6 +27,7 @@ jobs:
           EMAILJS_PUBLIC_KEY:  ${{ secrets.EMAILJS_PUBLIC_KEY }}
           EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
           TO_EMAIL:            ${{ secrets.TO_EMAIL }}
+          APP_URL:             ${{ secrets.APP_URL }}
           SCHEDULE:            ${{ github.event.schedule }}
           DISPATCH_TYPE:       ${{ github.event.inputs.type }}
         run: node scripts/reminder.mjs
