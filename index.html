@@ -309,7 +309,7 @@ main{min-width:0}
 @media(max-width:940px){
   .wrap{grid-template-columns:1fr}
   .rail{position:static;order:-1}
-  .side{width:auto;order:-2}
+  .side{width:auto;order:-2;position:static}
   .tabs{position:sticky;top:0;z-index:20;width:auto;flex-direction:row;overflow-x:auto;gap:7px;padding:8px 2px;background:var(--bg);border:none;border-radius:0;box-shadow:none;-webkit-overflow-scrolling:touch}
   .tabs:hover{width:auto;background:var(--bg);border:none;box-shadow:none}
   .tab{width:auto;flex:0 0 auto;padding:8px 14px;border:1px solid var(--line-solid);background:var(--panel);border-radius:999px}
@@ -465,8 +465,8 @@ main{min-width:0}
 /* phase strip (replaces the hex memory map) */
 
 /* left sidebar nav — collapsed icon rail, expands on hover (desktop) */
-.side{width:56px;position:relative;z-index:30}
-.tabs{position:sticky;top:112px;width:56px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:15px;background:transparent;border:1px solid transparent;overflow:hidden;transition:width .18s ease,background .18s,box-shadow .18s,border-color .18s}
+.side{width:56px;position:sticky;top:112px;align-self:start;z-index:40}
+.tabs{width:56px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:15px;background:transparent;border:1px solid transparent;overflow:hidden;transition:width .18s ease,background .18s,box-shadow .18s,border-color .18s}
 .tabs:hover{width:224px;background:var(--panel);border-color:var(--line-solid);box-shadow:0 18px 44px rgba(0,0,0,.34);z-index:60}
 .tab{display:flex;align-items:center;gap:12px;width:210px;background:transparent;border:1px solid transparent;color:var(--muted);padding:9px 8px;font-size:14px;font-weight:600;border-radius:12px;text-align:left;transition:background .12s,color .12s;position:relative;cursor:pointer}
 .tab:hover{color:var(--ink);background:var(--panel2)}

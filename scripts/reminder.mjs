@@ -38,45 +38,45 @@ const readBlock = feat
 
 // ---- variant pools ----
 const STUDY = [
-  { kicker:'STUDY TIME', headline:'Sapir. Bao is watching. 🐼',
+  { kicker:'STUDY TIME', headline:'Sapir. Bao is watching. 🐼', mood:'cool',
     subline:'You said 2026 was the year. The roadmap’s open, a task has your name on it, and this little panda refuses to nap until you start. Fifteen minutes — that’s the whole ask.',
     cta:'Start today’s task ▸', streak:'🔥 Your streak is Bao’s favourite toy. Please don’t take it away.',
     sign:'— Bao 🐼 (definitely not guilt-tripping you)' },
-  { kicker:'STUDY TIME', headline:'Plot twist: the tasks don’t finish themselves 😎',
+  { kicker:'STUDY TIME', headline:'Plot twist: the tasks don’t finish themselves 😎', mood:'cool',
     subline:'Shocking, Bao knows. Open the tracker, hit ▶ Focus, and let one Pomodoro carry you. A single block and you’re officially winning today.',
     cta:'Open the tracker ▸', streak:'Skip today and the streak resets. Bao remembers everything. 🐼',
     sign:'— Bao, tapping the tiny watch ⌚' },
-  { kicker:'STUDY TIME', headline:'Knock knock. It’s your potential 🚪',
+  { kicker:'STUDY TIME', headline:'Knock knock. It’s your potential 🚪', mood:'happy',
     subline:'It’s been on the doorstep next to a very patient panda all day. Let them both in — one focused task and you’re back in the game.',
     cta:'Let it in ▸', streak:'A task a day keeps the impostor syndrome away. Bao read that somewhere.',
     sign:'— Bao 🐼 (management, sort of)' },
-  { kicker:'PACE CHECK', headline:'Ahead-of-plan looks adorable on you 🏇',
+  { kicker:'PACE CHECK', headline:'Ahead-of-plan looks adorable on you 🏇', mood:'celebrate',
     subline:'Want to keep the lead? One task today holds the pace and the bragging rights. Behind the plan? Even better reason to open the app and claw it back — Bao believes in you.',
     cta:'Check my pace ▸', streak:'The leaderboard doesn’t nap. Bao’s watching it for you. 👀',
     sign:'— Coach Bao (supportive, mildly pushy) 🐼' },
-  { kicker:'STUDY TIME', headline:'Two minutes to start. Zero regret. ⏱️',
+  { kicker:'STUDY TIME', headline:'Two minutes to start. Zero regret. ⏱️', mood:'happy',
     subline:'The hardest part is opening the tab — and you’re basically already here. Pick a task, start the timer, and make one panda very proud.',
     cta:'Two-minute start ▸', streak:'🔥 Feed the streak before Bao starts sulking.',
     sign:'— Bao, the little push you needed 🐼' },
-  { kicker:'STREAK ALERT', headline:'Bao is doing the sad eyes 🥺',
+  { kicker:'STREAK ALERT', headline:'Bao is doing the sad eyes 🥺', mood:'sad',
     subline:'Nothing logged yet today, and your streak is wobbling on the edge. One task is all it takes to turn this frown upside down. Do it for the panda.',
     cta:'Save the streak ▸', streak:'Momentum is expensive to rebuild. Bao would rather not.',
     sign:'— Bao 🐼 (nose pressed to the glass)' },
 ];
 const READING = [
-  { kicker:'READING RADAR', headline:'Fresh intel just dropped 📰',
+  { kicker:'READING RADAR', headline:'Fresh intel just dropped 📰', mood:'surprised',
     subline:'The best security minds published while you slept. Bao fetched today’s must-read — skim it, then log it to feed the streak.',
     cta:'Open the feed ▸', streak:'Two reads a week keeps your TTPs current and your excuses irrelevant.',
     sign:'— Bao 📡🐼' },
-  { kicker:'READING RADAR', headline:'Stay sharp or get dull. Bao’s call is obvious 🔪',
+  { kicker:'READING RADAR', headline:'Stay sharp or get dull. Bao’s call is obvious 🔪', mood:'cool',
     subline:'New research, new exploits, new deep-dives are live in the feed. Grab one, learn something, mark it read. Easy dopamine, panda-approved.',
     cta:'Feed my brain ▸', streak:'🔥 Reading streaks count too. Keep it alive for Bao.',
     sign:'— Your slightly smug panda buddy 🐼' },
-  { kicker:'READING RADAR', headline:'The internet’s been busy. So should you 🌐',
+  { kicker:'READING RADAR', headline:'The internet’s been busy. So should you 🌐', mood:'surprised',
     subline:'While you were away, the feed filled up with spicy security reads. Bao lined up the tastiest one below — see where the rabbit hole goes.',
     cta:'Down the rabbit hole ▸', streak:'One good read now beats ten saved-for-later tabs.',
     sign:'— Bao 📡🐼' },
-  { kicker:'READING RADAR', headline:'A hungry panda wants a brain snack 🧠',
+  { kicker:'READING RADAR', headline:'A hungry panda wants a brain snack 🧠', mood:'love',
     subline:'Feed it something from today’s drop. This one looks delicious — open it, skim it, log the read, keep Bao full.',
     cta:'Serve the snack ▸', streak:'🔥 Don’t let the reading streak go hungry.',
     sign:'— Bao, room service (security edition) 🐼' },
@@ -87,6 +87,7 @@ const subject = type === 'study'
   ? rand(['🐼 Sapir, study time','🐼 Bao is watching, Sapir','▶️ 15 minutes. Let’s go, Sapir','🥺 Bao is doing the sad eyes, Sapir'])
   : rand(['📰 Fresh security reads for you','🧠 Bao’s serving a brain snack','📡 Reading radar — new drops','🐼 Stay sharp, Sapir']);
 const cta_url = type === 'study' ? (app + '#today') : (app + '#feed');
+const mascot_url = app + 'assets/bao-' + (v.mood || 'happy') + '.png';
 
 // plaintext fallback (used if your EmailJS template still renders {{message}})
 const message =
@@ -106,7 +107,7 @@ const payload = {
     cta_text: v.cta, cta_url, streak_line: v.streak,
     read_label: readBlock.label, read_title: readBlock.title,
     read_source: readBlock.source, read_url: readBlock.url,
-    sign: v.sign, message, title: subject,
+    sign: v.sign, mascot_url, message, title: subject,
     time: new Date().toLocaleString('en-GB', { timeZone: 'Asia/Jerusalem' })
   }
 };
