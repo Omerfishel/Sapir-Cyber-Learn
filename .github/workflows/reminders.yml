@@ -4,8 +4,8 @@ name: Sapir roadmap reminders
 # Israel is UTC+3 (summer) / UTC+2 (winter) — adjust the crons by 1h across DST if you care about the exact minute.
 on:
   schedule:
-    - cron: '30 5 * * *'    # ~08:30 Israel (summer): reading nudge
-    - cron: '0 16 * * *'    # ~19:00 Israel (summer): study nudge
+    - cron: '30 17 * * *'    # ~08:30 Israel (summer): reading nudge
+    - cron: '0 15 * * *'    # ~19:00 Israel (summer): study nudge
   workflow_dispatch:        # lets you run it by hand from the Actions tab
     inputs:
       type:
