@@ -7,7 +7,8 @@ sign-in + a shared leaderboard) powered by **Supabase**.
 
 Files:
 - `index.html` — the app (this is the only file that changes between versions).
-- `config.js` — your Supabase keys (you edit this once; it survives app updates).
+- `config.example.js` — template for your Supabase keys. Copy it to `config.js`
+  **once**, fill in `url`/`anon`, and your `config.js` then survives every update.
 - `supabase-setup.sql` — run once to create the contest tables.
 - `.github/workflows/reminders.yml` + `scripts/reminder.mjs` — the daily email cron (playful, rotating, features today's top article).
 - `.github/workflows/feed.yml` + `scripts/build-feed.mjs` — builds `feed.json` (the live 📰 Feed) a few times a day.
@@ -37,8 +38,8 @@ secrets** (Settings → Secrets and variables → Actions):
 `EMAILJS_SERVICE_ID`, `EMAILJS_TEMPLATE_ID`, `EMAILJS_PUBLIC_KEY`,
 `EMAILJS_PRIVATE_KEY`, `TO_EMAIL` (optionally `APP_URL` — defaults to your
 Pages URL, used for the CTA button + deep-links). Each send **randomly rotates**
-through many owl-style variants and, once the feed is live, features the day's
-hottest article. The workflow then emails a reading nudge
+through many Duolingo-style variants voiced by **Bao the panda** 🐼 and, once
+the feed is live, features the day's hottest article. The workflow then emails a reading nudge
 (~08:30 Israel) and a study nudge (~19:00 Israel). Times are UTC in the cron and
 shift ~1h across DST. Run it by hand from the **Actions** tab to test.
 
@@ -73,7 +74,7 @@ and a shared leaderboard. Skip it and the app stays single-user/local.
    you prefer verified emails — the app handles both; users just confirm first.)
 4. **Get your keys:** **Settings → API** → copy the **Project URL** and the
    **anon public** key.
-5. **Paste them into `config.js`** (the `url` and `anon` fields) and commit.
+5. **Copy `config.example.js` → `config.js`**, paste your `url` and `anon` into it, and commit.
 6. Reload the site. You'll see a **Sign in** button (top-right) and a **🏆
    Leaderboard** tab. Share the URL — everyone signs up with an email + password
    and a display name, and races to complete tasks.
@@ -90,7 +91,11 @@ Supabase keys live in `config.js`, updating is safe and simple:
 - **Just replace `index.html`** with the new one and commit (via `git push`, or
   GitHub's **Add file → Upload files** / the pencil-edit button). GitHub Pages
   redeploys automatically within a minute.
-- **Don't** touch `config.js` — your keys and everyone's data stay put.
+- **Don't** touch `config.js` — your keys and everyone's data stay put. The
+  download ships `config.example.js` (never `config.js`), so even a “replace
+  everything” upload can’t overwrite your real keys. If login/leaderboard ever
+  vanish after an update, your `config.js` lost its keys — re-paste them from
+  Supabase → Settings → API (or `git show <old-commit>:config.js`) and push.
 - Existing local progress is **not** wiped: the storage key is unchanged, and the
   first time a user signs in the app offers to import the progress already in
   their browser.
