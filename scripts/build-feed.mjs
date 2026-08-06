@@ -2,7 +2,7 @@
 // Runs in GitHub Actions (full internet, no CORS). Zero dependencies.
 // Tolerant of individual feed failures — skips what it can't fetch/parse.
 
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, readFileSync } from 'node:fs';
 
 // name, RSS/Atom URL, category (must match the app's category colors).
 const FEEDS = [
@@ -102,11 +102,19 @@ results.forEach((r, i) => {
   else console.warn('skip', FEEDS[i][0], '-', r.reason && r.reason.message);
 });
 
-// dedupe by link, sort newest-first, cap
-const seen = new Set(); const dedup = [];
-for (const it of flat) { const k = it.link.split('#')[0]; if (seen.has(k)) continue; seen.add(k); dedup.push(it); }
-dedup.sort((a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0));
-const items = dedup.slice(0, 70);
+// merge with the existing feed.json so history accumulates (old items don't just vanish)
+let prev = [];
+try { const j = JSON.parse(readFileSync('feed.json', 'utf8')); if (j && Array.isArray(j.items)) prev = j.items; } catch { /* first run */ }
+
+// dedupe by link — this run's fresh copy wins over the archived one
+const seen = new Set(); const merged = [];
+for (const it of [...flat, ...prev]) { const k = (it.link || '').split('#')[0]; if (!k || seen.has(k)) continue; seen.add(k); merged.push(it); }
+
+// keep ~35 days of history, newest first, capped
+const cutoff = Date.now() - 35 * 864e5;
+let items = merged.filter(it => { const t = Date.parse(it.date) || 0; return !t || t >= cutoff; });
+items.sort((a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0));
+items = items.slice(0, 600);
 
 writeFileSync('feed.json', JSON.stringify({ updated: new Date().toISOString(), count: items.length, sources: ok, items }));
 console.log(`feed.json written: ${items.length} items from ${ok}/${FEEDS.length} sources`);
